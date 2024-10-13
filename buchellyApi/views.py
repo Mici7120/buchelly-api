@@ -27,7 +27,7 @@ class Login(APIView):
                 "email":user.email
             }, status=status.HTTP_200_OK)
         else:
-            return Response({"error":"Invalida credentials"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error":"Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 class SignUp(APIView):
     def post(self, request):
@@ -38,11 +38,6 @@ class SignUp(APIView):
                 email = request.data.get("email"),
                 password = request.data.get("password"),
             )
-            return Response({
-                    'id': producto.id,
-                    'nombre': producto.nombre,
-                    'descripcion': producto.descripcion,
-                    'precio': float(producto.precio),
-                }, status=status.HTTP_201_CREATED)
+            return Response({}, status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({}, )
+            return Response({"error":"Sign Up error"}, status=status.HTTP_400_BAD_REQUEST)
