@@ -55,7 +55,7 @@ class SignUp(APIView):
             user = AppUser.objects.create(
                 fullname = request.data.get("fullname"),
                 email = request.data.get("email"),
-                password = request.data.get("password"),
+                password = make_password(request.data.get("password")),
                 userroleid=client_role 
             )
             return Response({}, status=status.HTTP_201_CREATED)
