@@ -33,9 +33,9 @@ class Login(APIView):
                 return Response({
                     "token": token,  
                     "message": "Login successful",
-                    #"user_id": user.appuserid,
                     "full_name": user.fullname,
-                    "email": user.email
+                    "email": user.email,
+                    "id": user.id
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
@@ -51,12 +51,12 @@ class SignUp(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         try:
-            client_role = UserRole.objects.get(userroleid="9B2BE8F5-7E94-4C0B-85FC-D49691FCF6D2")
+            client_role = UserRole.objects.get(name="Client")
             user = AppUser.objects.create(
                 fullname = request.data.get("fullname"),
                 email = request.data.get("email"),
                 password = make_password(request.data.get("password")),
-                userroleid=client_role 
+                userroleid=client_role
             )
             return Response({}, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -73,7 +73,7 @@ class PasswordResetRequestView(APIView):
         except AppUser.DoesNotExist:
             return Response({"error": "No se encuentran registros asociados a ese correo"}, status=status.HTTP_400_BAD_REQUEST)
 
-        token, expiration_date = generate_token(user.appuserid)
+        token, expiration_date = generate_token(user.id)
         PasswordResetToken.objects.create(user=user, token=token, expiration_date=expiration_date)
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -99,7 +99,7 @@ class PasswordResetTokenValidationView(APIView):
     def get(self, request, uidb64, token):
         try:
             appuserid = force_str(urlsafe_base64_decode(uidb64))
-            user = AppUser.objects.get(appuserid=appuserid)
+            user = AppUser.objects.get(id=appuserid)
         except (TypeError, ValueError, OverflowError, AppUser.DoesNotExist):
             return Response({"error": "Token o usuario inválido"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -120,7 +120,7 @@ class PasswordResetConfirmView(APIView):
     def post(self, request, uidb64, token):
         try:
             appuserid = force_str(urlsafe_base64_decode(uidb64))
-            user = AppUser.objects.get(appuserid=appuserid) 
+            user = AppUser.objects.get(id=appuserid) 
         except (TypeError, ValueError, OverflowError, AppUser.DoesNotExist):
             return Response({"error": "Token o usuario inválido"}, status=status.HTTP_400_BAD_REQUEST)
 
