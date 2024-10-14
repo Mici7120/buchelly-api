@@ -28,12 +28,12 @@ class Login(APIView):
             user = AppUser.objects.get(email=email)
             
             if check_password(pw, user.password):
-                token = generate_jwt_token(user.appuserid)
+                token = generate_jwt_token(user.email)
 
                 return Response({
                     "token": token,  
                     "message": "Login successful",
-                    "user_id": user.appuserid,
+                    #"user_id": user.appuserid,
                     "full_name": user.fullname,
                     "email": user.email
                 }, status=status.HTTP_200_OK)
