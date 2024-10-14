@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 class AppUser(models.Model):
-    appuserid = models.CharField(db_column='id', primary_key=True, max_length=36)  # Field name made lowercase.
+    #appuserid = models.CharField(db_column='id', primary_key=True, max_length=36)  # Field name made lowercase.
     fullname = models.CharField(db_column='full_name', max_length=250)  # Field name made lowercase.
     email = models.CharField(db_column='email', max_length=250)  # Field name made lowercase.
     password = models.CharField(db_column='password', max_length=300)  # Field name made lowercase.
