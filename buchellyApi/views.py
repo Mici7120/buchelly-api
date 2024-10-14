@@ -9,47 +9,58 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from .utils import generate_token
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from rest_framework import serializers
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
-
+from .utils import generate_jwt_token
 class Login(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         email = request.data.get('email')
         pw = request.data.get('password')
     
         try:
             user = AppUser.objects.get(email=email)
-        except AppUser.DoesNotExist:
-            return Response({"error":"User doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if check_password(pw, user.password):
-            token, created = Token.objects.get_or_create(user=user)
+            
+            if check_password(pw, user.password):
+                token = generate_jwt_token(user.appuserid)
 
-            return Response({
-                "token":token,
-                "message":"Logins successful",
-                "user_id":user.appuserid,
-                "full_name":user.fullname,
-                "email":user.email
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({"error":"Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    "token": token,  
+                    "message": "Login successful",
+                    "user_id": user.appuserid,
+                    "full_name": user.fullname,
+                    "email": user.email
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except AppUser.DoesNotExist:
+            return Response({"error": "User doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            print(e)
+            return Response({"error": "An error occurred during login", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class SignUp(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         try:
+            client_role = UserRole.objects.get(userroleid="9B2BE8F5-7E94-4C0B-85FC-D49691FCF6D2")
             user = AppUser.objects.create(
                 fullname = request.data.get("fullname"),
-                username = request.data.get("username"),
                 email = request.data.get("email"),
                 password = request.data.get("password"),
+                userroleid=client_role 
             )
             return Response({}, status=status.HTTP_201_CREATED)
         except Exception as e:
+            print(e)
             return Response({"error":"Sign Up error"}, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordResetRequestView(APIView):
