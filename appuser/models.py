@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class AppUser(models.Model):
     appuserid = models.CharField(db_column='AppUserId', primary_key=True, max_length=36)  # Field name made lowercase.
@@ -10,3 +11,17 @@ class AppUser(models.Model):
     class Meta:
         managed = False
         db_table = 'AppUser'
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiration_date = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'PasswordResetToken'
+    def is_expired(self):
+        return timezone.now() > self.expiration_date
+
+    def __str__(self):
+        return f"Token for {self.user.email}"

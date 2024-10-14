@@ -16,10 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import Login, SignUp
+from .views import Login, SignUp, PasswordResetRequestView, PasswordResetConfirmView, PasswordResetTokenValidationView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', Login.as_view()),
-    path('sign_up', SignUp.as_view())
+    path('sign_up', SignUp.as_view()),
+    path('password_reset_request/', PasswordResetRequestView.as_view()),
+    path('passwor_reset_validate/<str:uidb64>/<str:token>/', PasswordResetTokenValidationView.as_view()),
+    path('password_reset_confirm/<str:uidb64>/<str:token>/', PasswordResetConfirmView.as_view()),
 ]
