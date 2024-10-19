@@ -6,5 +6,5 @@ class UserRole(models.Model):
     status = models.BooleanField(db_column='Status')  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'UserRole'

@@ -10,16 +10,16 @@ class AppUser(models.Model):
     userroleid = models.ForeignKey('userrole.UserRole', models.DO_NOTHING, db_column='user_role_id')  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'AppUser'
 
 class PasswordResetToken(models.Model):
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    token = models.CharField(max_length=64, unique=True)
+    token = models.CharField(max_length=64, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
     class Meta:
-        managed = False
+        managed = True
         db_table = 'PasswordResetToken'
     def is_expired(self):
         return timezone.now() > self.expiration_date

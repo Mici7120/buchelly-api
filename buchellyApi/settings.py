@@ -88,16 +88,12 @@ WSGI_APPLICATION = 'buchellyApi.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',
+    "default": {
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DATABASE_NAME'),
-        "USER": os.getenv('DATABASE_USER'),
-        "PASSWORD": os.getenv('DATABASE_PASSWORD'),
-        "HOST": os.getenv('DATABASE_HOST'),
-        "PORT": "1433",
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        }
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
     }
 }
 
