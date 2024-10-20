@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import AppointmentSerializer
+from .serializers import AppointmentSerializer, BlockeddatetimeSerializer
 from .models import Appointment, Blockeddatetime
 from django.utils import timezone
 
@@ -23,3 +23,7 @@ class AppointmentView(viewsets.ModelViewSet):
         not_available_schedules = list(blocked_datetimes) + list(appointments)
 
         return Response(not_available_schedules)
+
+class BlockeddatetimeView(viewsets.ModelViewSet):
+    serializer_class = BlockeddatetimeSerializer
+    queryset = Blockeddatetime.objects.all()

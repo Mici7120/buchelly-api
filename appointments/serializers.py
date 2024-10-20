@@ -56,3 +56,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("No se puede crear una cita que se solape con otra cita.")
         
         return data
+
+class BlockeddatetimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blockeddatetime
+        fields = '__all__'

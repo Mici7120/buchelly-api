@@ -22,10 +22,10 @@ class Appointment(models.Model):
 
 
 class Blockeddatetime(models.Model):
-    blockeddatetimeid = models.CharField(db_column='BlockedDatetimeId', primary_key=True, max_length=36)  # Field name made lowercase.
+    blockeddatetimeid = models.CharField(db_column='BlockedDatetimeId', primary_key=True, max_length=36, default=uuid.uuid4())  # Field name made lowercase.
     startdatetime = models.DateTimeField(db_column='StartDatetime')  # Field name made lowercase.
     enddatetime = models.DateTimeField(db_column='EndDatetime')  # Field name made lowercase.
-    status = models.BooleanField(db_column='Status')  # Field name made lowercase.
+    status = models.BooleanField(db_column='Status', default=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
