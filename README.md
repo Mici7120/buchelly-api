@@ -4,15 +4,6 @@
 - python 3.10.12
 - pip 22.0.2
 
-## Install ODBC drivers
-`sudo apt-get install unixodbc-dev`
-
-`curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -`
-
-`sudo add-apt-repository "$(curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list)"`
-
-`sudo apt-get update`
-`sudo apt-get install -y msodbcsql17`
 
 ## Clone the repository
 
@@ -35,6 +26,14 @@
 ## Install the requirements
 
 `pip install -r requirements.txt`
+
+## Make migrations
+
+`python manage.py makemigrations`
+
+## Run Migrations
+
+`python manage.py migrate`
 
 # Run Server
 
