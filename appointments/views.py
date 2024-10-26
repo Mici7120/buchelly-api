@@ -44,7 +44,7 @@ class AppointmentView(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["post"])
     def date_range(self, request, pk=None):
         start_date = request.data.get('stardatetime')
         end_date = request.data.get('enddatetime')
