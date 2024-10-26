@@ -46,7 +46,7 @@ class AppointmentView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def date_range(self, request, pk=None):
-        start_date = request.data.get('stardatetime')
+        start_date = request.data.get('startdatetime')
         end_date = request.data.get('enddatetime')
 
         appointments = Appointment.objects.filter(startdatetime__gte=start_date, enddatetime__lte=end_date)
