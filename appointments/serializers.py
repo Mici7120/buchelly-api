@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from .models import Appointment, Blockeddatetime
 from django.utils import timezone
+from appuser.serializer import AppUserSerializer
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    appuserid = AppUserSerializer()
     class Meta:
         model = Appointment
         fields = '__all__'
