@@ -6,6 +6,7 @@ from .serializers import AppointmentSerializer, BlockeddatetimeSerializer
 from .models import Appointment, Blockeddatetime
 from django.utils import timezone
 from django.core.mail import send_mail
+from datetime import timedelta
 
 # Create your views here.
 class AppointmentView(viewsets.ModelViewSet):
@@ -34,6 +35,24 @@ class AppointmentView(viewsets.ModelViewSet):
         not_available_schedules = list(blocked_datetimes) + list(appointments)
 
         return Response(not_available_schedules)
+
+    @action(detail=False, methods=["get"])
+    def recent(self, request, pk=None):
+        recent_30 = timezone.now() - timedelta(days=30)
+        appointments = Appointment.objects.filter(startdatetime__gte=recent_30)
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def date_range(self, request, pk=None):
+        start_date = request.data.get('stardatetime')
+        end_date = request.data.get('enddatetime')
+
+        appointments = Appointment.objects.filter(startdatetime__gte=start_date, enddatetime__lte=end_date)
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        return Response(serializer.data)
 
 class BlockeddatetimeView(viewsets.ModelViewSet):
     serializer_class = BlockeddatetimeSerializer
