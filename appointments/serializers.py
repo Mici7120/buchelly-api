@@ -5,7 +5,12 @@ from appuser.serializer import AppUserSerializer
 from appuser.models import AppUser
 class AppointmentSerializer(serializers.ModelSerializer):
     #appuserid = AppUserSerializer()
-    appuserid = serializers.PrimaryKeyRelatedField(queryset=AppUser.objects.all())
+    appuserid = AppUserSerializer(read_only=True)  
+    appuserid_id = serializers.PrimaryKeyRelatedField(
+        source='appuserid', 
+        queryset=AppUser.objects.all(),
+        write_only=True  
+    )    
     class Meta:
         model = Appointment
         fields = '__all__'
