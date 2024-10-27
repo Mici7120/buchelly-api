@@ -10,7 +10,8 @@ import uuid
 
 
 class Appointment(models.Model):
-    appointmentid = models.UUIDField(db_column='AppointmentId', primary_key=True, default=uuid.uuid4, editable=False)  # Field name made lowercase.
+    #appointmentid = models.UUIDField(db_column='AppointmentId', primary_key=True, default=uuid.uuid4, editable=False)  # Field name made lowercase.
+    appointmentid = models.CharField(db_column='AppointmentId', primary_key=True, default=uuid.uuid4, editable=False)  # Prueba actualizar citas
     appuserid = models.ForeignKey('appuser.AppUser', models.DO_NOTHING, db_column='user_id')  # Field name made lowercase.
     startdatetime = models.DateTimeField(db_column='StartDatetime', unique=True)  # Field name made lowercase.
     enddatetime = models.DateTimeField(db_column='EndDatetime', unique=True)  # Field name made lowercase.
