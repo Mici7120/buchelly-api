@@ -19,14 +19,14 @@ from django.conf import settings
 from .utils import generate_jwt_token
 class Login(APIView):
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         email = request.data.get('email')
         pw = request.data.get('password')
-    
+
         try:
             user = AppUser.objects.get(email=email)
-            
+
             if check_password(pw, user.password):
                 token = generate_jwt_token(user.email)
 
@@ -39,29 +39,44 @@ class Login(APIView):
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         except AppUser.DoesNotExist:
             return Response({"error": "User doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         except Exception as e:
             print(e)
             return Response({"error": "An error occurred during login", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class SignUp(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         try:
-            client_role = UserRole.objects.get(name="Client")
-            user = AppUser.objects.create(
-                fullname = request.data.get("fullname"),
-                email = request.data.get("email"),
-                password = make_password(request.data.get("password")),
-                userroleid=client_role
+            # Verificar si el rol "Client" existe; si no, crearlo
+            client_role, created = UserRole.objects.get_or_create(
+                name="Client", defaults={"status": True}
             )
-            return Response({}, status=status.HTTP_201_CREATED)
+
+            # Crear un nuevo usuario con el rol "Client"
+            user = AppUser.objects.create(
+                fullname=request.data.get("fullname"),
+                email=request.data.get("email"),
+                password=make_password(request.data.get("password")),
+                userroleid=client_role,
+            )
+
+            return Response(
+                {"message": "User registered successfully"},
+                status=status.HTTP_201_CREATED,
+            )
+
         except Exception as e:
             print(e)
-            return Response({"error":"Sign Up error"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Sign Up error"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -92,7 +107,7 @@ class PasswordResetRequestView(APIView):
             return Response({"error": "Error enviando el correo"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"message": "Correo de restablecimiento de contraseña enviado"}, status=status.HTTP_200_OK)
-    
+
 class PasswordResetTokenValidationView(APIView):
     permission_classes = [AllowAny]
 
