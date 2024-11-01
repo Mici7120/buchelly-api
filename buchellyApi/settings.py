@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'appointments',
     'appuser',
-    'userrole'
+    'userrole',
+    'jobs'
 ]
 
 MIDDLEWARE = [
