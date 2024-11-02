@@ -6,5 +6,5 @@ class JobsConfig(AppConfig):
     name = 'jobs'
 
     def ready(self):
-        from jobs import views
-        views.start()
+        from jobs.scheduler import scheduler
+        scheduler.start()

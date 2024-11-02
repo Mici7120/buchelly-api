@@ -7,6 +7,7 @@ from .models import Appointment, Blockeddatetime
 from django.utils import timezone
 from django.core.mail import send_mail
 from datetime import timedelta
+from jobs.views import schedule_reminder_emails
 
 # Create your views here.
 class AppointmentView(viewsets.ModelViewSet):
@@ -21,6 +22,7 @@ class AppointmentView(viewsets.ModelViewSet):
             recipient_list=[appointment.appuserid.email],
             from_email=None
         )
+        schedule_reminder_emails(appointment=appointment)
         return Response(appointment, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["get"])
