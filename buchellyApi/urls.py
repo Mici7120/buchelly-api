@@ -14,17 +14,32 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
-from .views import Login, SignUp, PasswordResetRequestView, PasswordResetConfirmView, PasswordResetTokenValidationView
+from .views import (
+    Login,
+    SignUp,
+    PasswordResetRequestView,
+    PasswordResetConfirmView,
+    PasswordResetTokenValidationView,
+    Logout,
+)
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', Login.as_view()),
-    path('sign_up', SignUp.as_view()),
-    path('password_reset_request/', PasswordResetRequestView.as_view()),
-    path('password_reset_validate/<str:uidb64>/<str:token>/', PasswordResetTokenValidationView.as_view()),
-    path('password_reset_confirm/<str:uidb64>/<str:token>/', PasswordResetConfirmView.as_view()),
-    path('', include('appointments.urls')),
+    path("admin/", admin.site.urls),
+    path("login/", Login.as_view()),
+    path("sign_up", SignUp.as_view()),
+    path("password_reset_request/", PasswordResetRequestView.as_view()),
+    path(
+        "password_reset_validate/<str:uidb64>/<str:token>/",
+        PasswordResetTokenValidationView.as_view(),
+    ),
+    path(
+        "password_reset_confirm/<str:uidb64>/<str:token>/",
+        PasswordResetConfirmView.as_view(),
+    ),
+    path("logout/", Logout.as_view(), name="logout"),
+    path("", include("appointments.urls")),
 ]
