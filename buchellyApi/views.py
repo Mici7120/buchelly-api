@@ -71,15 +71,13 @@ class SignUp(APIView):
             client_role, created = UserRole.objects.get_or_create(
                 name="Client", defaults={"status": True}
             )
-
+    
             admin_role, created_admin = UserRole.objects.get_or_create(
                 name="Admin", defaults={"status": True}
             )
 
-            # si el rol como data entonces lo asigno a role_name si no asigno rolname con el valor de client
-            role_name = (
-                request.data.get("rol") if request.data.get("rol") else client_role
-            )
+            # si el rol como data es exactamente igual a "Admin" se asigna el rol de Admin, si no se asigna el rol de Client (tambien aplica si no se pasa el rol)
+            role_name = admin_role if request.data.get("role") == "Admin" else client_role
 
             # Crear un nuevo usuario con el rol "Client"
             user = AppUser.objects.create(
