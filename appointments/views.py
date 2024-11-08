@@ -8,6 +8,8 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from datetime import timedelta
 from jobs.views import schedule_reminder_emails
+from datetime import datetime
+from calendar import monthrange
 
 # Create your views here.
 class AppointmentView(viewsets.ModelViewSet):
@@ -52,6 +54,22 @@ class AppointmentView(viewsets.ModelViewSet):
         end_date = request.data.get('enddatetime')
 
         appointments = Appointment.objects.filter(startdatetime__gte=start_date, enddatetime__lte=end_date)
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=["post"])
+    def month(self, request, pk=None):
+        # Obtener el mes y año del request
+        year = int(request.data.get('year'))
+        month = int(request.data.get('month'))
+
+        # Calcular el primer y último día del mes
+        start_date = datetime(year, month, 1)
+        end_date = datetime(year, month, monthrange(year, month)[1], 23, 59, 59)
+
+        # Filtrar las citas que están dentro del mes
+        appointments = Appointment.objects.filter(startdatetime__gte=start_date, startdatetime__lte=end_date)
         serializer = AppointmentSerializer(appointments, many=True)
 
         return Response(serializer.data)
