@@ -10,6 +10,7 @@ from datetime import timedelta
 from jobs.views import schedule_reminder_emails
 from datetime import datetime
 from calendar import monthrange
+from appuser.models import AppUser
 
 # Create your views here.
 class AppointmentView(viewsets.ModelViewSet):
@@ -95,6 +96,8 @@ class AppointmentView(viewsets.ModelViewSet):
             appointment.enddatetime = new_end
             appointment.save()
 
+            admin_user = AppUser.objects.filter(userroleid='1515bf7f-2af2-40ba-9c00-007b81b57870').first()
+
             send_mail(
                 subject="Creaciones Buchelly - Cita actualizada",
                 message=f"Su cita ha sido actualizada.\n\nNuevos detalles de la cita:\n\nID: {appointment.appointmentid}\nFecha y hora: {appointment.startdatetime}",
@@ -105,7 +108,7 @@ class AppointmentView(viewsets.ModelViewSet):
             send_mail(
                 subject="Cita actualizada por el usuario",
                 message=f"El usuario {appointment.appuserid.email} ha actualizado la cita ID: {appointment.appointmentid}. Nuevas fechas: {appointment.startdatetime} a {appointment.enddatetime}.",
-                recipient_list=["admin@example.com"],
+                recipient_list=[admin_user.email],
                 from_email=None
             )
 
@@ -123,6 +126,8 @@ class AppointmentView(viewsets.ModelViewSet):
             appointment.status = False 
             appointment.save()
 
+            admin_user = AppUser.objects.filter(userroleid='1515bf7f-2af2-40ba-9c00-007b81b57870').first()
+
             send_mail(
                 subject="Creaciones Buchelly - Cita cancelada",
                 message=f"Su cita con ID {appointment.appointmentid} ha sido cancelada exitosamente.",
@@ -130,12 +135,12 @@ class AppointmentView(viewsets.ModelViewSet):
                 from_email=None
             )
 
-            """     send_mail(
+            send_mail(
                 subject="Cita cancelada por el usuario",
                 message=f"El usuario {appointment.appuserid.email} ha cancelado la cita ID: {appointment.appointmentid}.",
-                recipient_list=["admin@example.com"],
+                recipient_list=[admin_user.email],
                 from_email=None
-            ) """
+            )
 
             return Response({"message": "Cita cancelada exitosamente."}, status=status.HTTP_200_OK)
 
