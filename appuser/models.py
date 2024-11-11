@@ -3,7 +3,7 @@ from django.utils import timezone
 import uuid
 
 class AppUser(models.Model):
-    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4())  # Field name made lowercase.
+    id = models.CharField(primary_key=True, max_length=36, blank=True)  # Field name made lowercase.
     fullname = models.CharField(db_column='full_name', max_length=250)  # Field name made lowercase.
     email = models.CharField(db_column='email', max_length=250)  # Field name made lowercase.
     password = models.CharField(db_column='password', max_length=300)  # Field name made lowercase.
