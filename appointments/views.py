@@ -6,7 +6,8 @@ from .serializers import AppointmentSerializer, BlockeddatetimeSerializer
 from .models import Appointment, Blockeddatetime
 from django.utils import timezone
 from django.core.mail import send_mail
-from datetime import timedelta
+from datetime import timedelta, datetime
+import pytz
 from jobs.views import schedule_reminder_emails
 from datetime import datetime
 from calendar import monthrange
@@ -19,9 +20,14 @@ class AppointmentView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         appointment = serializer.save()
+
+        startdatetime_utc = appointment.startdatetime
+
+        colombia_zone = pytz.timezone("America/Bogota")
+
         send_mail(
             subject="Creaciones Buchelly - Cita creada",
-            message= f"Su cita ha sido creada exitosamente.\n\nDetalles de la cita:\n\nID: {appointment.appointmentid}\nFecha y hora: {appointment.startdatetime}",
+            message= f"Su cita ha sido agendada exitosamente.\n\nDetalles de la cita:\n\nFecha y hora: {startdatetime_utc.astimezone(colombia_zone)}",
             recipient_list=[appointment.appuserid.email],
             from_email=None
         )
