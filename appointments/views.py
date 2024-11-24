@@ -31,7 +31,7 @@ class AppointmentView(viewsets.ModelViewSet):
             recipient_list=[appointment.appuserid.email],
             from_email=None
         )
-        schedule_reminder_emails(appointment=appointment)
+        #schedule_reminder_emails(appointment=appointment)
         return Response(appointment, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["get"])
@@ -152,6 +152,41 @@ class AppointmentView(viewsets.ModelViewSet):
 
         except Appointment.DoesNotExist:
             return Response({"error": "Cita no encontrada o ya está cancelada."}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=["get"])
+    def cron_reminder(self, request, pk=None):
+        now = datetime.now(pytz.utc)
+        in_30_minutes = now + timedelta(minutes=30)
+        in_1_day = now + timedelta(days=1)
+        colombia_zone = pytz.timezone("America/Bogota")
+
+        appointments_in_30_minutes = Appointment.objects.filter(
+            startdatetime__gte=in_30_minutes,
+            startdatetime__lte=in_30_minutes + timedelta(minutes=15)
+        )
+
+        for appointment in appointments_in_30_minutes:
+            send_mail(
+                subject="Recordatorio de cita",
+                message=f"No olvides que tu cita es hoy a las {appointment.startdatetime.astimezone(colombia_zone)}.",
+                recipient_list=[appointment.appuserid.email],
+                from_email=None
+            )
+
+        appointments_in_1_day = Appointment.objects.filter(
+            startdatetime__gte=in_1_day,
+            startdatetime__lte=in_1_day + timedelta(minutes=15)
+        )
+
+        for appointment in appointments_in_1_day:
+            send_mail(
+                subject="Recordatorio de cita",
+                message=f"No olvides que tu cita es mañana a las {appointment.startdatetime.astimezone(colombia_zone)}.",
+                recipient_list=[appointment.appuserid.email],
+                from_email=None
+            )
+
+        return Response("Cron_reminder executed")
 
 class BlockeddatetimeView(viewsets.ModelViewSet):
     serializer_class = BlockeddatetimeSerializer
